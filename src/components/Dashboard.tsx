@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Users, Building2, Music2, CalendarCheck, ListMusic, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import type { AnalyticsOverview, GrowthPoint, TopSong, OrgSummary } from '../lib/types'
+import type { AnalyticsOverview, GrowthPoint, TopSong, OrgSummary, Person } from '../lib/types'
 import { StatCard } from './StatCard'
 import { GrowthChart } from './GrowthChart'
 import { TopSongs } from './TopSongs'
 import { OrganizationsList } from './OrganizationsList'
+import { PeopleList } from './PeopleList'
 
 interface DashboardData {
   overview: AnalyticsOverview
   growth: GrowthPoint[]
   topSongs: TopSong[]
   orgs: OrgSummary[]
+  people: Person[]
 }
 
 export function Dashboard({ userEmail }: { userEmail: string }) {
@@ -22,17 +24,18 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
     let cancelled = false
 
     async function load() {
-      const [overviewRes, growthRes, songsRes, orgsRes] = await Promise.all([
+      const [overviewRes, growthRes, songsRes, orgsRes, peopleRes] = await Promise.all([
         supabase.rpc('admin_analytics_overview'),
         supabase.rpc('admin_analytics_growth_by_month', { months_back: 12 }),
         supabase.rpc('admin_analytics_top_songs', { limit_count: 10 }),
         supabase.rpc('admin_analytics_organizations'),
+        supabase.rpc('admin_analytics_people'),
       ])
 
       if (cancelled) return
 
       const firstError =
-        overviewRes.error || growthRes.error || songsRes.error || orgsRes.error
+        overviewRes.error || growthRes.error || songsRes.error || orgsRes.error || peopleRes.error
       if (firstError) {
         setError(
           firstError.message === 'forbidden'
@@ -47,6 +50,7 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
         growth: (growthRes.data ?? []) as GrowthPoint[],
         topSongs: (songsRes.data ?? []) as TopSong[],
         orgs: (orgsRes.data ?? []) as OrgSummary[],
+        people: (peopleRes.data ?? []) as Person[],
       })
     }
 
@@ -134,8 +138,9 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
                 alignItems: 'start',
               }}
             >
-              <TopSongs songs={data.topSongs} />
+              <PeopleList people={data.people} />
               <OrganizationsList orgs={data.orgs} />
+              <TopSongs songs={data.topSongs} />
             </div>
           </>
         )}

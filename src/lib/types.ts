@@ -30,3 +30,12 @@ export interface OrgSummary {
   song_count: number
   event_count: number
 }
+
+export interface Person {
+  person_id: string
+  full_name: string
+  email: string
+  phone: string | null
+  created_at: string
+  organizations: string
+}
