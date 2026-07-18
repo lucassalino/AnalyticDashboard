@@ -81,13 +81,15 @@ export function PeopleList({ people }: { people: Person[] }) {
               <div
                 style={{
                   fontSize: '0.72rem',
-                  color: 'rgba(255,255,255,0.55)',
                   textAlign: 'right',
                   maxWidth: '10rem',
                   flexShrink: 0,
                 }}
               >
-                {person.organizations}
+                <div style={{ color: 'rgba(255,255,255,0.55)' }}>{person.organizations}</div>
+                <div style={{ color: 'rgba(255,255,255,0.35)', marginTop: '0.15rem' }}>
+                  desde {new Date(person.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </div>
               </div>
             </div>
           ))

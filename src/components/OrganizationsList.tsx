@@ -35,7 +35,7 @@ export function OrganizationsList({ orgs }: { orgs: OrgSummary[] }) {
                   {org.name}
                 </div>
                 <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>
-                  desde {new Date(org.created_at).toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' })}
+                  desde {new Date(org.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
                 </div>
               </div>
 
