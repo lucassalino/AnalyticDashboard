@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Users, Building2, Music2, CalendarCheck, ListMusic, LogOut } from 'lucide-react'
+import { Users, Building2, Music2, CalendarCheck, ListMusic, LogOut, LayoutDashboard, BadgeCheck } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { AnalyticsOverview, GrowthPoint, TopSong, OrgSummary, Person } from '../lib/types'
 import { StatCard } from './StatCard'
@@ -7,6 +7,7 @@ import { GrowthChart } from './GrowthChart'
 import { TopSongs } from './TopSongs'
 import { OrganizationsList } from './OrganizationsList'
 import { PeopleList } from './PeopleList'
+import { AdminPlans } from './AdminPlans'
 
 interface DashboardData {
   overview: AnalyticsOverview
@@ -17,6 +18,7 @@ interface DashboardData {
 }
 
 export function Dashboard({ userEmail }: { userEmail: string }) {
+  const [tab, setTab] = useState<'overview' | 'plans'>('overview')
   const [data, setData] = useState<DashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -78,70 +80,78 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <nav style={{ display: 'flex', gap: '0.4rem' }}>
+            <button
+              onClick={() => setTab('overview')}
+              className="ghost-btn"
+              style={{ background: tab === 'overview' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)' }}
+            >
+              <LayoutDashboard size={13} /> Visão geral
+            </button>
+            <button
+              onClick={() => setTab('plans')}
+              className="ghost-btn"
+              style={{ background: tab === 'plans' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)' }}
+            >
+              <BadgeCheck size={13} /> Planos
+            </button>
+          </nav>
           <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>{userEmail}</span>
-          <button
-            onClick={() => supabase.auth.signOut()}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '0.5rem',
-              padding: '0.45rem 0.75rem',
-              fontSize: '0.75rem',
-              color: 'rgba(255,255,255,0.7)',
-              cursor: 'pointer',
-            }}
-          >
+          <button onClick={() => supabase.auth.signOut()} className="ghost-btn">
             <LogOut size={13} /> Sair
           </button>
         </div>
       </header>
 
       <main style={{ padding: '2rem', maxWidth: '72rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {error && (
-          <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
-            {error}
-          </div>
-        )}
+        {tab === 'plans' && <AdminPlans />}
 
-        {!error && !data && (
-          <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', padding: '2rem 0', textAlign: 'center' }}>
-            A carregar dados…
-          </div>
-        )}
-
-        {data && (
+        {tab === 'overview' && (
           <>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '1rem',
-              }}
-            >
-              <StatCard icon={Users} label="Pessoas" value={data.overview.total_profiles} />
-              <StatCard icon={Building2} label="Organizações" value={data.overview.total_organizations} />
-              <StatCard icon={Music2} label="Músicas" value={data.overview.total_org_songs} />
-              <StatCard icon={CalendarCheck} label="Eventos publicados" value={data.overview.published_events} />
-              <StatCard icon={ListMusic} label="Entradas em setlists" value={data.overview.total_setlist_entries} />
-            </div>
+            {error && (
+              <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
+                {error}
+              </div>
+            )}
 
-            <GrowthChart data={data.growth} />
+            {!error && !data && (
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', padding: '2rem 0', textAlign: 'center' }}>
+                A carregar dados…
+              </div>
+            )}
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '1.5rem',
-                alignItems: 'start',
-              }}
-            >
-              <PeopleList people={data.people} />
-              <OrganizationsList orgs={data.orgs} />
-              <TopSongs songs={data.topSongs} />
-            </div>
+            {data && (
+              <>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                    gap: '1rem',
+                  }}
+                >
+                  <StatCard icon={Users} label="Pessoas" value={data.overview.total_profiles} />
+                  <StatCard icon={Building2} label="Organizações" value={data.overview.total_organizations} />
+                  <StatCard icon={Music2} label="Músicas" value={data.overview.total_org_songs} />
+                  <StatCard icon={CalendarCheck} label="Eventos publicados" value={data.overview.published_events} />
+                  <StatCard icon={ListMusic} label="Entradas em setlists" value={data.overview.total_setlist_entries} />
+                </div>
+
+                <GrowthChart data={data.growth} />
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                    gap: '1.5rem',
+                    alignItems: 'start',
+                  }}
+                >
+                  <PeopleList people={data.people} />
+                  <OrganizationsList orgs={data.orgs} />
+                  <TopSongs songs={data.topSongs} />
+                </div>
+              </>
+            )}
           </>
         )}
       </main>

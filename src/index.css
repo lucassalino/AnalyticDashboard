@@ -211,3 +211,124 @@ body {
   color: #fca5a5;
   font-size: 0.8rem;
 }
+
+/* ═══════════════════════════════════════════════
+   Form controls reused outside the auth page
+   (admin panels, filters, etc.)
+   ═══════════════════════════════════════════════ */
+
+.field-input,
+.field-select,
+.field-textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+}
+
+.field-input::placeholder,
+.field-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  outline: none;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.field-select option {
+  background: #1a1a1e;
+  color: #ffffff;
+}
+
+.primary-btn {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background 0.15s, transform 0.15s;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: #e8e8e8;
+  transform: translateY(-1px);
+}
+
+.primary-btn:disabled {
+  background: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+.ghost-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.status-badge.status-active {
+  background: rgba(74, 222, 128, 0.12);
+  color: #86efac;
+}
+
+.status-badge.status-free {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.status-badge.status-downgraded_locked {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fca5a5;
+}
+
+.status-badge.status-past_due,
+.status-badge.status-expired {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fcd34d;
+}
+
+.status-badge.status-canceled {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.warning-box {
+  display: flex;
+  gap: 0.6rem;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.78rem;
+  color: #fca5a5;
+  line-height: 1.4;
+}
