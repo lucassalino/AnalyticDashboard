@@ -39,38 +39,40 @@ export function PeoplePage({ people }: { people: Person[] }) {
         {filtered.length === 0 ? (
           <div className="empty-state">Nenhuma pessoa encontrada.</div>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Contacto</th>
-                <th>Organizações</th>
-                <th>Desde</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((person) => (
-                <tr key={person.person_id}>
-                  <td>
-                    <div className="table-row-main">
-                      <div className="table-icon">
-                        <User size={14} color="rgba(255,255,255,0.5)" />
-                      </div>
-                      <span className="table-name">{person.full_name}</span>
-                    </div>
-                  </td>
-                  <td className="table-muted">
-                    {person.email}
-                    {person.phone ? ` · ${person.phone}` : ''}
-                  </td>
-                  <td className="table-muted">{person.organizations}</td>
-                  <td className="table-muted">
-                    {new Date(person.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </td>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Contacto</th>
+                  <th>Organizações</th>
+                  <th>Desde</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((person) => (
+                  <tr key={person.person_id}>
+                    <td>
+                      <div className="table-row-main">
+                        <div className="table-icon">
+                          <User size={14} color="rgba(255,255,255,0.5)" />
+                        </div>
+                        <span className="table-name">{person.full_name}</span>
+                      </div>
+                    </td>
+                    <td className="table-muted">
+                      {person.email}
+                      {person.phone ? ` · ${person.phone}` : ''}
+                    </td>
+                    <td className="table-muted">{person.organizations}</td>
+                    <td className="table-muted">
+                      {new Date(person.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {filtered.length > 0 && (

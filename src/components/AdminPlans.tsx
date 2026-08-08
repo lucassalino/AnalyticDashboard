@@ -193,7 +193,7 @@ export function AdminPlans() {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1.1fr) minmax(320px, 1fr)', gap: '1.5rem', alignItems: 'start' }}>
+    <div className="plans-grid">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <div className="toolbar">
           <div style={{ position: 'relative', flex: 1, minWidth: '12rem' }}>
@@ -225,43 +225,45 @@ export function AdminPlans() {
           {filteredOrgs.length === 0 ? (
             <div className="empty-state">Nenhuma organização encontrada.</div>
           ) : (
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Organização</th>
-                  <th>Plano</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrgs.map((org) => (
-                  <tr
-                    key={org.org_id}
-                    onClick={() => selectOrg(org)}
-                    style={{
-                      cursor: 'pointer',
-                      background: org.org_id === selectedOrgId ? 'rgba(255,255,255,0.05)' : undefined,
-                    }}
-                  >
-                    <td>
-                      <div className="table-row-main">
-                        <div className="table-icon">
-                          <Building2 size={14} color="rgba(255,255,255,0.5)" />
-                        </div>
-                        <div style={{ minWidth: 0 }}>
-                          <div className="table-name">{org.org_name}</div>
-                          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>{org.member_count} pessoas</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="table-muted">{org.plan_name}</td>
-                    <td>
-                      <span className={`status-badge status-${org.status}`}>{STATUS_LABELS[org.status] ?? org.status}</span>
-                    </td>
+            <div className="table-scroll">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Organização</th>
+                    <th>Plano</th>
+                    <th>Estado</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredOrgs.map((org) => (
+                    <tr
+                      key={org.org_id}
+                      onClick={() => selectOrg(org)}
+                      style={{
+                        cursor: 'pointer',
+                        background: org.org_id === selectedOrgId ? 'rgba(255,255,255,0.05)' : undefined,
+                      }}
+                    >
+                      <td>
+                        <div className="table-row-main">
+                          <div className="table-icon">
+                            <Building2 size={14} color="rgba(255,255,255,0.5)" />
+                          </div>
+                          <div style={{ minWidth: 0 }}>
+                            <div className="table-name">{org.org_name}</div>
+                            <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>{org.member_count} pessoas</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="table-muted">{org.plan_name}</td>
+                      <td>
+                        <span className={`status-badge status-${org.status}`}>{STATUS_LABELS[org.status] ?? org.status}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
 
           {filteredOrgs.length > 0 && (

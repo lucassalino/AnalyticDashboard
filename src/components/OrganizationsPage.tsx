@@ -37,37 +37,39 @@ export function OrganizationsPage({ orgs }: { orgs: OrgSummary[] }) {
         {filtered.length === 0 ? (
           <div className="empty-state">Nenhuma organização encontrada.</div>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Organização</th>
-                <th>Pessoas</th>
-                <th>Músicas</th>
-                <th>Eventos</th>
-                <th>Criada</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((org) => (
-                <tr key={org.org_id}>
-                  <td>
-                    <div className="table-row-main">
-                      <div className="table-icon">
-                        <Building2 size={14} color="rgba(255,255,255,0.5)" />
-                      </div>
-                      <span className="table-name">{org.name}</span>
-                    </div>
-                  </td>
-                  <td className="table-muted">{org.member_count}</td>
-                  <td className="table-muted">{org.song_count}</td>
-                  <td className="table-muted">{org.event_count}</td>
-                  <td className="table-muted">
-                    {new Date(org.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </td>
+          <div className="table-scroll">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Organização</th>
+                  <th>Pessoas</th>
+                  <th>Músicas</th>
+                  <th>Eventos</th>
+                  <th>Criada</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filtered.map((org) => (
+                  <tr key={org.org_id}>
+                    <td>
+                      <div className="table-row-main">
+                        <div className="table-icon">
+                          <Building2 size={14} color="rgba(255,255,255,0.5)" />
+                        </div>
+                        <span className="table-name">{org.name}</span>
+                      </div>
+                    </td>
+                    <td className="table-muted">{org.member_count}</td>
+                    <td className="table-muted">{org.song_count}</td>
+                    <td className="table-muted">{org.event_count}</td>
+                    <td className="table-muted">
+                      {new Date(org.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {filtered.length > 0 && (
