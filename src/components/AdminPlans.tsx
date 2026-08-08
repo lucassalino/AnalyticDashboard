@@ -30,6 +30,7 @@ export function AdminPlans() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
 
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null)
   const [targetPlan, setTargetPlan] = useState<PlanSlug>('semente')
@@ -84,9 +85,12 @@ export function AdminPlans() {
 
   const filteredOrgs = useMemo(() => {
     const q = search.trim().toLowerCase()
-    if (!q) return orgs
-    return orgs.filter((o) => o.org_name.toLowerCase().includes(q))
-  }, [orgs, search])
+    return orgs.filter((o) => {
+      const matchesSearch = !q || o.org_name.toLowerCase().includes(q)
+      const matchesStatus = statusFilter === 'all' || o.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
+  }, [orgs, search, statusFilter])
 
   function selectOrg(org: OrgSubscriptionRow) {
     setSelectedOrgId(org.org_id)
@@ -189,68 +193,84 @@ export function AdminPlans() {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) minmax(320px, 1.1fr)', gap: '1.5rem', alignItems: 'start' }}>
-      <div className="glass-card" style={{ padding: '1.5rem' }}>
-        <h2 style={{ fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.75rem' }}>Organizações</h2>
-
-        <div style={{ position: 'relative', marginBottom: '1rem' }}>
-          <Search size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)' }} />
-          <input
-            className="field-input"
-            style={{ paddingLeft: '2rem' }}
-            placeholder="Pesquisar organização…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1.1fr) minmax(320px, 1fr)', gap: '1.5rem', alignItems: 'start' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div className="toolbar">
+          <div style={{ position: 'relative', flex: 1, minWidth: '12rem' }}>
+            <Search size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.35)' }} />
+            <input
+              className="field-input"
+              style={{ paddingLeft: '2rem' }}
+              placeholder="Pesquisar organização…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <select
+            className="field-select"
+            style={{ width: 'auto', minWidth: '9rem' }}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">Todos os estados</option>
+            {Object.entries(STATUS_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div>
-          {filteredOrgs.length === 0 && (
-            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>Nenhuma organização encontrada.</p>
+        <div className="data-table-wrap">
+          {filteredOrgs.length === 0 ? (
+            <div className="empty-state">Nenhuma organização encontrada.</div>
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Organização</th>
+                  <th>Plano</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOrgs.map((org) => (
+                  <tr
+                    key={org.org_id}
+                    onClick={() => selectOrg(org)}
+                    style={{
+                      cursor: 'pointer',
+                      background: org.org_id === selectedOrgId ? 'rgba(255,255,255,0.05)' : undefined,
+                    }}
+                  >
+                    <td>
+                      <div className="table-row-main">
+                        <div className="table-icon">
+                          <Building2 size={14} color="rgba(255,255,255,0.5)" />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div className="table-name">{org.org_name}</div>
+                          <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>{org.member_count} pessoas</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="table-muted">{org.plan_name}</td>
+                    <td>
+                      <span className={`status-badge status-${org.status}`}>{STATUS_LABELS[org.status] ?? org.status}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
-          {filteredOrgs.map((org) => (
-            <button
-              key={org.org_id}
-              onClick={() => selectOrg(org)}
-              className="glass-row"
-              style={{
-                width: '100%',
-                textAlign: 'left',
-                background: org.org_id === selectedOrgId ? 'rgba(255,255,255,0.06)' : 'transparent',
-                border: 'none',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
-                cursor: 'pointer',
-                color: 'inherit',
-                borderRadius: '0.5rem',
-              }}
-            >
-              <div
-                style={{
-                  width: '2rem',
-                  height: '2rem',
-                  borderRadius: '0.5rem',
-                  background: 'rgba(255,255,255,0.06)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <Building2 size={15} color="rgba(255,255,255,0.5)" />
-              </div>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {org.org_name}
-                </div>
-                <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)' }}>
-                  {org.plan_name} · {org.member_count} pessoas
-                </div>
-              </div>
-
-              <span className={`status-badge status-${org.status}`}>{STATUS_LABELS[org.status] ?? org.status}</span>
-            </button>
-          ))}
+          {filteredOrgs.length > 0 && (
+            <div className="table-footer">
+              <span>
+                {filteredOrgs.length} de {orgs.length} organizaç{orgs.length === 1 ? 'ão' : 'ões'}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

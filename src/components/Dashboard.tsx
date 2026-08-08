@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Users, Building2, Music2, CalendarCheck, ListMusic, LogOut, LayoutDashboard, BadgeCheck } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { AnalyticsOverview, GrowthPoint, TopSong, OrgSummary, Person } from '../lib/types'
-import { StatCard } from './StatCard'
-import { GrowthChart } from './GrowthChart'
-import { TopSongs } from './TopSongs'
-import { OrganizationsList } from './OrganizationsList'
-import { PeopleList } from './PeopleList'
+import { Sidebar, type PageKey } from './Sidebar'
+import { OverviewPage } from './OverviewPage'
+import { OrganizationsPage } from './OrganizationsPage'
+import { PeoplePage } from './PeoplePage'
 import { AdminPlans } from './AdminPlans'
 
 interface DashboardData {
@@ -18,7 +16,7 @@ interface DashboardData {
 }
 
 export function Dashboard({ userEmail }: { userEmail: string }) {
-  const [tab, setTab] = useState<'overview' | 'plans'>('overview')
+  const [page, setPage] = useState<PageKey>('overview')
   const [data, setData] = useState<DashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -63,98 +61,49 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
   }, [])
 
   return (
-    <div className="app-bg">
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '1.25rem 2rem',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>AnalyticDashboard</h1>
-          <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', margin: '0.15rem 0 0' }}>
-            ServiceFlow · dados agregados
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <nav style={{ display: 'flex', gap: '0.4rem' }}>
-            <button
-              onClick={() => setTab('overview')}
-              className="ghost-btn"
-              style={{ background: tab === 'overview' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)' }}
-            >
-              <LayoutDashboard size={13} /> Visão geral
-            </button>
-            <button
-              onClick={() => setTab('plans')}
-              className="ghost-btn"
-              style={{ background: tab === 'plans' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)' }}
-            >
-              <BadgeCheck size={13} /> Planos
-            </button>
-          </nav>
-          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>{userEmail}</span>
-          <button onClick={() => supabase.auth.signOut()} className="ghost-btn">
-            <LogOut size={13} /> Sair
-          </button>
-        </div>
-      </header>
+    <div className="app-shell">
+      <Sidebar page={page} onNavigate={setPage} userEmail={userEmail} />
 
-      <main style={{ padding: '2rem', maxWidth: '72rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {tab === 'plans' && <AdminPlans />}
+      <div className="main-area">
+        <div className="top-bar" />
 
-        {tab === 'overview' && (
+        {error && (
+          <div className="page-content">
+            <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
+              {error}
+            </div>
+          </div>
+        )}
+
+        {!error && !data && (
+          <div className="page-content">
+            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', padding: '2rem 0', textAlign: 'center' }}>
+              A carregar dados…
+            </div>
+          </div>
+        )}
+
+        {!error && data && (
           <>
-            {error && (
-              <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
-                {error}
-              </div>
+            {page === 'overview' && (
+              <OverviewPage overview={data.overview} growth={data.growth} topSongs={data.topSongs} />
             )}
-
-            {!error && !data && (
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', padding: '2rem 0', textAlign: 'center' }}>
-                A carregar dados…
+            {page === 'organizations' && <OrganizationsPage orgs={data.orgs} />}
+            {page === 'people' && <PeoplePage people={data.people} />}
+            {page === 'plans' && (
+              <div className="page-content">
+                <div className="page-header">
+                  <div>
+                    <h1 className="page-title">Planos</h1>
+                    <p className="page-subtitle">Conceder planos de cortesia a organizações</p>
+                  </div>
+                </div>
+                <AdminPlans />
               </div>
-            )}
-
-            {data && (
-              <>
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                    gap: '1rem',
-                  }}
-                >
-                  <StatCard icon={Users} label="Pessoas" value={data.overview.total_profiles} />
-                  <StatCard icon={Building2} label="Organizações" value={data.overview.total_organizations} />
-                  <StatCard icon={Music2} label="Músicas" value={data.overview.total_org_songs} />
-                  <StatCard icon={CalendarCheck} label="Eventos publicados" value={data.overview.published_events} />
-                  <StatCard icon={ListMusic} label="Entradas em setlists" value={data.overview.total_setlist_entries} />
-                </div>
-
-                <GrowthChart data={data.growth} />
-
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                    gap: '1.5rem',
-                    alignItems: 'start',
-                  }}
-                >
-                  <PeopleList people={data.people} />
-                  <OrganizationsList orgs={data.orgs} />
-                  <TopSongs songs={data.topSongs} />
-                </div>
-              </>
             )}
           </>
         )}
-      </main>
+      </div>
     </div>
   )
 }
