@@ -20,13 +20,7 @@ export function OverviewPage({ overview, growth, topSongs }: OverviewPageProps) 
         </div>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '1rem',
-        }}
-      >
+      <div className="stat-grid">
         <StatCard icon={Users} label="Pessoas" value={overview.total_profiles} />
         <StatCard icon={Building2} label="Organizações" value={overview.total_organizations} />
         <StatCard icon={Music2} label="Músicas" value={overview.total_org_songs} />

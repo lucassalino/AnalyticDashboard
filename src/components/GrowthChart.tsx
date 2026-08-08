@@ -27,7 +27,7 @@ function formatMonthLabel(value: unknown) {
 export function GrowthChart({ data }: { data: GrowthPoint[] }) {
   return (
     <div className="glass-card" style={{ padding: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div>
           <h2 style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0 }}>Crescimento (12 meses)</h2>
           <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', margin: '0.2rem 0 0' }}>
