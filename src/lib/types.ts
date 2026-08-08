@@ -39,3 +39,47 @@ export interface Person {
   created_at: string
   organizations: string
 }
+
+export type PlanSlug = 'semente' | 'broto' | 'colheita' | 'celeiro'
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'free'
+  | 'past_due'
+  | 'downgraded_locked'
+  | 'expired'
+  | 'canceled'
+
+export interface Plan {
+  slug: PlanSlug
+  name: string
+  max_people: number | null
+  max_ministries: number | null
+  max_admins: number | null
+  max_leaders: number | null
+  price_monthly: number
+  price_annual: number
+  sort_order: number
+}
+
+export interface OrgSubscriptionRow {
+  org_id: string
+  org_name: string
+  org_created_at: string
+  plan: PlanSlug
+  plan_name: string
+  status: SubscriptionStatus
+  source: 'free' | 'manual' | 'coupon' | 'stripe'
+  billing_cycle: 'monthly' | 'annual'
+  started_at: string | null
+  expires_at: string | null
+  note: string | null
+  member_count: number
+}
+
+export interface PlanLimitPreview {
+  resource_type: 'people' | 'ministry' | 'admin' | 'leader'
+  used: number
+  limit: number | null
+  allowed: boolean
+}
