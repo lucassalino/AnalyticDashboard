@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Building2, Search, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react'
+import { Building2, Search, AlertTriangle, CheckCircle2, Loader2, ShieldOff } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { OrgSubscriptionRow, Plan, PlanLimitPreview, PlanSlug } from '../lib/types'
 
@@ -17,6 +17,13 @@ const STATUS_LABELS: Record<string, string> = {
   downgraded_locked: 'Bloqueado (acima do limite)',
   expired: 'Expirado',
   canceled: 'Cancelado',
+}
+
+const SOURCE_LABELS: Record<string, string> = {
+  stripe: 'Pago (Stripe)',
+  manual: 'Cortesia',
+  coupon: 'Cortesia (cupão)',
+  free: 'Grátis',
 }
 
 function formatDate(value: string | null) {
@@ -44,6 +51,10 @@ export function AdminPlans() {
   const [granting, setGranting] = useState(false)
   const [grantError, setGrantError] = useState<string | null>(null)
   const [grantSuccess, setGrantSuccess] = useState<string | null>(null)
+
+  const [confirmingRevoke, setConfirmingRevoke] = useState(false)
+  const [revoking, setRevoking] = useState(false)
+  const [revokeError, setRevokeError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -99,6 +110,8 @@ export function AdminPlans() {
     setExpiresAt('')
     setGrantError(null)
     setGrantSuccess(null)
+    setConfirmingRevoke(false)
+    setRevokeError(null)
   }
 
   useEffect(() => {
@@ -176,6 +189,52 @@ export function AdminPlans() {
     )
   }
 
+  async function handleRevoke() {
+    if (!selectedOrgId || !selectedOrg) return
+
+    setRevoking(true)
+    setRevokeError(null)
+    setGrantSuccess(null)
+
+    const { data, error } = await supabase.rpc('admin_revoke_plan', {
+      p_org_id: selectedOrgId,
+      p_note: 'Cortesia revogada via painel',
+    })
+
+    setRevoking(false)
+    setConfirmingRevoke(false)
+
+    if (error) {
+      setRevokeError(error.message === 'forbidden' ? 'A tua conta não tem acesso a esta ação.' : error.message)
+      return
+    }
+
+    const finalStatus = (data?.[0]?.status as string) ?? 'active'
+    setGrantSuccess(
+      finalStatus === 'downgraded_locked'
+        ? 'Cortesia revogada. A organização ficou acima dos limites do Semente — status: bloqueado.'
+        : 'Cortesia revogada — organização de volta ao plano Semente.',
+    )
+
+    const semente = plans.find((p) => p.slug === 'semente')
+    setOrgs((prev) =>
+      prev.map((o) =>
+        o.org_id === selectedOrgId
+          ? {
+              ...o,
+              plan: 'semente',
+              plan_name: semente?.name ?? 'Semente',
+              status: finalStatus as OrgSubscriptionRow['status'],
+              source: 'manual',
+              note: 'Cortesia revogada via painel',
+              expires_at: null,
+            }
+          : o,
+      ),
+    )
+    setTargetPlan('semente')
+  }
+
   if (loading) {
     return (
       <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', padding: '2rem 0', textAlign: 'center' }}>
@@ -231,6 +290,7 @@ export function AdminPlans() {
                   <tr>
                     <th>Organização</th>
                     <th>Plano</th>
+                    <th>Origem</th>
                     <th>Estado</th>
                   </tr>
                 </thead>
@@ -256,6 +316,9 @@ export function AdminPlans() {
                         </div>
                       </td>
                       <td className="table-muted">{org.plan_name}</td>
+                      <td>
+                        <span className={`source-badge source-${org.source}`}>{SOURCE_LABELS[org.source] ?? org.source}</span>
+                      </td>
                       <td>
                         <span className={`status-badge status-${org.status}`}>{STATUS_LABELS[org.status] ?? org.status}</span>
                       </td>
@@ -283,10 +346,14 @@ export function AdminPlans() {
           </p>
         ) : (
           <>
-            <h2 style={{ fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.2rem' }}>{selectedOrg.org_name}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+              <h2 style={{ fontSize: '0.95rem', fontWeight: 600, margin: 0 }}>{selectedOrg.org_name}</h2>
+              <span className={`source-badge source-${selectedOrg.source}`}>{SOURCE_LABELS[selectedOrg.source] ?? selectedOrg.source}</span>
+            </div>
             <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', margin: '0 0 1.25rem' }}>
               Plano atual: {selectedOrg.plan_name} · {STATUS_LABELS[selectedOrg.status] ?? selectedOrg.status}
               {selectedOrg.expires_at ? ` · expira em ${formatDate(selectedOrg.expires_at)}` : ''}
+              {selectedOrg.note ? ` · nota: ${selectedOrg.note}` : ''}
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -373,6 +440,47 @@ export function AdminPlans() {
               <button className="primary-btn" onClick={handleGrant} disabled={granting || previewLoading}>
                 {granting ? 'A conceder…' : 'Conceder plano'}
               </button>
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '1.5rem', paddingTop: '1.25rem' }}>
+              {selectedOrg.source === 'stripe' ? (
+                <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ShieldOff size={14} /> Subscrição paga via Stripe — não pode ser revogada por aqui.
+                </p>
+              ) : (
+                <>
+                  <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)', margin: '0 0 0.75rem' }}>
+                    Esta organização está numa cortesia concedida manualmente. Revogar devolve-a ao plano Semente
+                    imediatamente — se ficar acima dos limites, fica "bloqueada" até o admin da organização ajustar.
+                  </p>
+
+                  {revokeError && <p style={{ fontSize: '0.8rem', color: '#fca5a5', marginBottom: '0.75rem' }}>{revokeError}</p>}
+
+                  {!confirmingRevoke ? (
+                    <button className="danger-btn" onClick={() => setConfirmingRevoke(true)}>
+                      Revogar cortesia
+                    </button>
+                  ) : (
+                    <div className="warning-box" style={{ flexDirection: 'column', gap: '0.75rem' }}>
+                      <div style={{ display: 'flex', gap: '0.6rem' }}>
+                        <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+                        <div>
+                          Tens a certeza? <strong>{selectedOrg.org_name}</strong> perde o acesso ao plano{' '}
+                          {selectedOrg.plan_name} imediatamente.
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.6rem' }}>
+                        <button className="danger-btn" onClick={handleRevoke} disabled={revoking}>
+                          {revoking ? 'A revogar…' : 'Confirmar revogação'}
+                        </button>
+                        <button className="ghost-btn" onClick={() => setConfirmingRevoke(false)} disabled={revoking}>
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </>
         )}
