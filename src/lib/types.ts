@@ -84,6 +84,45 @@ export interface PlanLimitPreview {
   allowed: boolean
 }
 
+export interface OrgHealth {
+  org_id: string
+  last_event_date: string | null
+  days_since_last_event: number | null
+  upcoming_event_count: number
+  ministry_count: number
+  admin_count: number
+  leader_count: number
+}
+
+export interface OrgDetail {
+  org_id: string
+  org_name: string
+  org_created_at: string
+  plan: PlanSlug
+  plan_name: string
+  status: SubscriptionStatus
+  source: 'free' | 'manual' | 'coupon' | 'stripe'
+  note: string | null
+  expires_at: string | null
+  member_count: number
+  admin_count: number
+  leader_count: number
+  ministry_count: number
+  song_count: number
+  event_count: number
+  published_event_count: number
+  last_event_date: string | null
+  days_since_last_event: number | null
+  upcoming_event_count: number
+  pending_invite_count: number
+}
+
+export interface OrgGrowthPoint {
+  month: string
+  new_members: number
+  new_events: number
+}
+
 export interface CatalogSong {
   id: string
   name: string

@@ -7,6 +7,7 @@ import { OrganizationsPage } from './OrganizationsPage'
 import { PeoplePage } from './PeoplePage'
 import { AdminPlans } from './AdminPlans'
 import { CatalogPage } from './CatalogPage'
+import { OrgDetailPage } from './OrgDetailPage'
 
 interface DashboardData {
   overview: AnalyticsOverview
@@ -20,6 +21,7 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
   const [page, setPage] = useState<PageKey>('overview')
   const [data, setData] = useState<DashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -63,7 +65,14 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
 
   return (
     <div className="app-shell">
-      <Sidebar page={page} onNavigate={setPage} userEmail={userEmail} />
+      <Sidebar
+        page={page}
+        onNavigate={(next) => {
+          setPage(next)
+          setSelectedOrgId(null)
+        }}
+        userEmail={userEmail}
+      />
 
       <div className="main-area">
         <div className="top-bar" />
@@ -89,7 +98,12 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
             {page === 'overview' && (
               <OverviewPage overview={data.overview} growth={data.growth} topSongs={data.topSongs} />
             )}
-            {page === 'organizations' && <OrganizationsPage orgs={data.orgs} />}
+            {page === 'organizations' && selectedOrgId && (
+              <OrgDetailPage orgId={selectedOrgId} onBack={() => setSelectedOrgId(null)} />
+            )}
+            {page === 'organizations' && !selectedOrgId && (
+              <OrganizationsPage orgs={data.orgs} onSelectOrg={setSelectedOrgId} />
+            )}
             {page === 'people' && <PeoplePage people={data.people} />}
             {page === 'plans' && (
               <div className="page-content">
