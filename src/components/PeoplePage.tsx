@@ -60,12 +60,12 @@ export function PeoplePage({ people }: { people: Person[] }) {
                         <span className="table-name">{person.full_name}</span>
                       </div>
                     </td>
-                    <td className="table-muted">
+                    <td className="table-muted" data-label="Contacto">
                       {person.email}
                       {person.phone ? ` · ${person.phone}` : ''}
                     </td>
-                    <td className="table-muted">{person.organizations}</td>
-                    <td className="table-muted">
+                    <td className="table-muted" data-label="Organizações">{person.organizations}</td>
+                    <td className="table-muted" data-label="Desde">
                       {new Date(person.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </td>
                   </tr>

@@ -283,7 +283,7 @@ export function CatalogPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="table-muted">{song.bpm ?? '—'}</td>
+                        <td className="table-muted" data-label="BPM">{song.bpm ?? '—'}</td>
                       </tr>
                     ))}
                   </tbody>

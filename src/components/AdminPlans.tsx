@@ -315,11 +315,11 @@ export function AdminPlans() {
                           </div>
                         </div>
                       </td>
-                      <td className="table-muted">{org.plan_name}</td>
-                      <td>
+                      <td className="table-muted" data-label="Plano">{org.plan_name}</td>
+                      <td data-label="Origem">
                         <span className={`source-badge source-${org.source}`}>{SOURCE_LABELS[org.source] ?? org.source}</span>
                       </td>
-                      <td>
+                      <td data-label="Estado">
                         <span className={`status-badge status-${org.status}`}>{STATUS_LABELS[org.status] ?? org.status}</span>
                       </td>
                     </tr>
