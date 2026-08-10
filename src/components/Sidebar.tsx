@@ -15,32 +15,57 @@ export function Sidebar({ page, onNavigate, userEmail }: { page: PageKey; onNavi
   const initial = userEmail.trim().charAt(0).toUpperCase() || '?'
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-workspace">
-        <div className="sidebar-avatar">{initial}</div>
-        <span className="sidebar-workspace-name">AnalyticDashboard</span>
-      </div>
+    <>
+      <aside className="sidebar">
+        <div className="sidebar-workspace">
+          <div className="sidebar-avatar">{initial}</div>
+          <span className="sidebar-workspace-name">AnalyticDashboard</span>
+        </div>
 
-      <nav className="sidebar-nav">
+        <nav className="sidebar-nav">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.key}
+              className={`sidebar-link${page === item.key ? ' active' : ''}`}
+              onClick={() => onNavigate(item.key)}
+            >
+              <item.icon size={16} />
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user">{userEmail}</div>
+          <button className="sidebar-link" onClick={() => supabase.auth.signOut()}>
+            <LogOut size={16} />
+            Sair
+          </button>
+        </div>
+      </aside>
+
+      <header className="mobile-topbar">
+        <div className="sidebar-workspace" style={{ padding: 0 }}>
+          <div className="sidebar-avatar">{initial}</div>
+          <span className="sidebar-workspace-name">AnalyticDashboard</span>
+        </div>
+        <button className="icon-btn" onClick={() => supabase.auth.signOut()} aria-label="Sair">
+          <LogOut size={15} />
+        </button>
+      </header>
+
+      <nav className="bottom-nav">
         {NAV_ITEMS.map((item) => (
           <button
             key={item.key}
-            className={`sidebar-link${page === item.key ? ' active' : ''}`}
+            className={`bottom-nav-link${page === item.key ? ' active' : ''}`}
             onClick={() => onNavigate(item.key)}
           >
-            <item.icon size={16} />
-            {item.label}
+            <item.icon size={19} />
+            <span>{item.label}</span>
           </button>
         ))}
       </nav>
-
-      <div className="sidebar-footer">
-        <div className="sidebar-user">{userEmail}</div>
-        <button className="sidebar-link" onClick={() => supabase.auth.signOut()}>
-          <LogOut size={16} />
-          Sair
-        </button>
-      </div>
-    </aside>
+    </>
   )
 }

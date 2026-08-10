@@ -79,10 +79,10 @@ export function OrganizationsPage({ orgs, onSelectOrg }: { orgs: OrgSummary[]; o
                           <span className="table-name">{org.name}</span>
                         </div>
                       </td>
-                      <td className="table-muted">{org.member_count}</td>
-                      <td className="table-muted">{org.song_count}</td>
-                      <td className="table-muted">{org.event_count}</td>
-                      <td>
+                      <td className="table-muted" data-label="Pessoas">{org.member_count}</td>
+                      <td className="table-muted" data-label="Músicas">{org.song_count}</td>
+                      <td className="table-muted" data-label="Eventos">{org.event_count}</td>
+                      <td data-label="Última atividade">
                         {!h ? (
                           <span className="table-muted">—</span>
                         ) : inactive ? (
@@ -94,7 +94,7 @@ export function OrganizationsPage({ orgs, onSelectOrg }: { orgs: OrgSummary[]; o
                           <span className="table-muted">{h.last_event_date ? formatDate(h.last_event_date) : '—'}</span>
                         )}
                       </td>
-                      <td className="table-muted">{formatDate(org.created_at)}</td>
+                      <td className="table-muted" data-label="Criada">{formatDate(org.created_at)}</td>
                     </tr>
                   )
                 })}
