@@ -6,6 +6,7 @@ import { OverviewPage } from './OverviewPage'
 import { OrganizationsPage } from './OrganizationsPage'
 import { PeoplePage } from './PeoplePage'
 import { AdminPlans } from './AdminPlans'
+import { CatalogPage } from './CatalogPage'
 
 interface DashboardData {
   overview: AnalyticsOverview
@@ -101,6 +102,7 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
                 <AdminPlans />
               </div>
             )}
+            {page === 'catalog' && <CatalogPage />}
           </>
         )}
       </div>

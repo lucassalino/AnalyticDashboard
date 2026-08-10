@@ -83,3 +83,16 @@ export interface PlanLimitPreview {
   limit: number | null
   allowed: boolean
 }
+
+export interface CatalogSong {
+  id: string
+  name: string
+  artist: string
+  lyrics: string | null
+  chords: string | null
+  youtube_url: string | null
+  spotify_url: string | null
+  bpm: number | null
+  created_at: string
+  updated_at: string
+}
