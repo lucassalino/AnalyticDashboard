@@ -1,9 +1,25 @@
-import { useMemo, useState } from 'react'
-import { Building2, Search } from 'lucide-react'
-import type { OrgSummary } from '../lib/types'
+import { useEffect, useMemo, useState } from 'react'
+import { Building2, Search, AlertTriangle } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+import type { OrgSummary, OrgHealth } from '../lib/types'
 
-export function OrganizationsPage({ orgs }: { orgs: OrgSummary[] }) {
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+export function OrganizationsPage({ orgs, onSelectOrg }: { orgs: OrgSummary[]; onSelectOrg: (orgId: string) => void }) {
   const [search, setSearch] = useState('')
+  const [health, setHealth] = useState<Record<string, OrgHealth>>({})
+
+  useEffect(() => {
+    supabase.rpc('admin_orgs_health').then(({ data }) => {
+      const map: Record<string, OrgHealth> = {}
+      for (const row of (data ?? []) as OrgHealth[]) {
+        map[row.org_id] = row
+      }
+      setHealth(map)
+    })
+  }, [])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -45,28 +61,43 @@ export function OrganizationsPage({ orgs }: { orgs: OrgSummary[] }) {
                   <th>Pessoas</th>
                   <th>Músicas</th>
                   <th>Eventos</th>
+                  <th>Última atividade</th>
                   <th>Criada</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((org) => (
-                  <tr key={org.org_id}>
-                    <td>
-                      <div className="table-row-main">
-                        <div className="table-icon">
-                          <Building2 size={14} color="rgba(255,255,255,0.5)" />
+                {filtered.map((org) => {
+                  const h = health[org.org_id]
+                  const inactive = h && (h.days_since_last_event === null || h.days_since_last_event > 60)
+                  return (
+                    <tr key={org.org_id} onClick={() => onSelectOrg(org.org_id)} style={{ cursor: 'pointer' }}>
+                      <td>
+                        <div className="table-row-main">
+                          <div className="table-icon">
+                            <Building2 size={14} color="rgba(255,255,255,0.5)" />
+                          </div>
+                          <span className="table-name">{org.name}</span>
                         </div>
-                        <span className="table-name">{org.name}</span>
-                      </div>
-                    </td>
-                    <td className="table-muted">{org.member_count}</td>
-                    <td className="table-muted">{org.song_count}</td>
-                    <td className="table-muted">{org.event_count}</td>
-                    <td className="table-muted">
-                      {new Date(org.created_at).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="table-muted">{org.member_count}</td>
+                      <td className="table-muted">{org.song_count}</td>
+                      <td className="table-muted">{org.event_count}</td>
+                      <td>
+                        {!h ? (
+                          <span className="table-muted">—</span>
+                        ) : inactive ? (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#fca5a5', fontSize: '0.78rem' }}>
+                            <AlertTriangle size={12} />
+                            {h.last_event_date ? `há ${h.days_since_last_event} dias` : 'sem eventos'}
+                          </span>
+                        ) : (
+                          <span className="table-muted">{h.last_event_date ? formatDate(h.last_event_date) : '—'}</span>
+                        )}
+                      </td>
+                      <td className="table-muted">{formatDate(org.created_at)}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
