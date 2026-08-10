@@ -321,6 +321,54 @@ body {
   color: rgba(255, 255, 255, 0.4);
 }
 
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.source-badge.source-stripe {
+  background: rgba(74, 222, 128, 0.12);
+  color: #86efac;
+}
+
+.source-badge.source-manual,
+.source-badge.source-coupon {
+  background: rgba(124, 108, 240, 0.15);
+  color: #b8adf7;
+}
+
+.source-badge.source-free {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.danger-btn {
+  background: transparent;
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+}
+
+.danger-btn:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.danger-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .warning-box {
   display: flex;
   gap: 0.6rem;
