@@ -1,13 +1,14 @@
-import { LayoutDashboard, Building2, Users, BadgeCheck, LogOut } from 'lucide-react'
+import { LayoutDashboard, Building2, Users, BadgeCheck, Music2, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
-export type PageKey = 'overview' | 'organizations' | 'people' | 'plans'
+export type PageKey = 'overview' | 'organizations' | 'people' | 'plans' | 'catalog'
 
 const NAV_ITEMS: { key: PageKey; label: string; icon: typeof LayoutDashboard }[] = [
   { key: 'overview', label: 'Visão geral', icon: LayoutDashboard },
   { key: 'organizations', label: 'Organizações', icon: Building2 },
   { key: 'people', label: 'Pessoas', icon: Users },
   { key: 'plans', label: 'Planos', icon: BadgeCheck },
+  { key: 'catalog', label: 'Catálogo', icon: Music2 },
 ]
 
 export function Sidebar({ page, onNavigate, userEmail }: { page: PageKey; onNavigate: (page: PageKey) => void; userEmail: string }) {
