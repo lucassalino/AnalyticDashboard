@@ -3,13 +3,31 @@ import { supabase } from '../lib/supabase'
 
 export type PageKey = 'overview' | 'organizations' | 'people' | 'plans' | 'catalog'
 
-const NAV_ITEMS: { key: PageKey; label: string; icon: typeof LayoutDashboard }[] = [
-  { key: 'overview', label: 'Visão geral', icon: LayoutDashboard },
-  { key: 'organizations', label: 'Organizações', icon: Building2 },
-  { key: 'people', label: 'Pessoas', icon: Users },
-  { key: 'plans', label: 'Planos', icon: BadgeCheck },
-  { key: 'catalog', label: 'Catálogo', icon: Music2 },
+interface NavItem {
+  key: PageKey
+  label: string
+  icon: typeof LayoutDashboard
+}
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Monitorização',
+    items: [
+      { key: 'overview', label: 'Visão geral', icon: LayoutDashboard },
+      { key: 'organizations', label: 'Organizações', icon: Building2 },
+      { key: 'people', label: 'Pessoas', icon: Users },
+    ],
+  },
+  {
+    label: 'Gestão',
+    items: [
+      { key: 'plans', label: 'Planos', icon: BadgeCheck },
+      { key: 'catalog', label: 'Catálogo', icon: Music2 },
+    ],
+  },
 ]
+
+const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.items)
 
 export function Sidebar({ page, onNavigate, userEmail }: { page: PageKey; onNavigate: (page: PageKey) => void; userEmail: string }) {
   const initial = userEmail.trim().charAt(0).toUpperCase() || '?'
@@ -23,15 +41,20 @@ export function Sidebar({ page, onNavigate, userEmail }: { page: PageKey; onNavi
         </div>
 
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              className={`sidebar-link${page === item.key ? ' active' : ''}`}
-              onClick={() => onNavigate(item.key)}
-            >
-              <item.icon size={16} />
-              {item.label}
-            </button>
+          {NAV_GROUPS.map((group) => (
+            <div className="sidebar-group" key={group.label}>
+              <div className="sidebar-group-label">{group.label}</div>
+              {group.items.map((item) => (
+                <button
+                  key={item.key}
+                  className={`sidebar-link${page === item.key ? ' active' : ''}`}
+                  onClick={() => onNavigate(item.key)}
+                >
+                  <item.icon size={16} />
+                  {item.label}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
 

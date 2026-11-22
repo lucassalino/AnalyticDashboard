@@ -245,7 +245,7 @@ export function AdminPlans() {
 
   if (loadError) {
     return (
-      <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
+      <div className="glass-card" style={{ padding: '1.25rem', color: '#d99a9a', fontSize: '0.85rem' }}>
         {loadError}
       </div>
     )
@@ -405,7 +405,7 @@ export function AdminPlans() {
                 </p>
               )}
 
-              {previewError && <p style={{ fontSize: '0.78rem', color: '#fca5a5' }}>{previewError}</p>}
+              {previewError && <p style={{ fontSize: '0.78rem', color: '#d99a9a' }}>{previewError}</p>}
 
               {!previewLoading && preview && wouldLock && (
                 <div className="warning-box">
@@ -430,12 +430,12 @@ export function AdminPlans() {
 
               {!previewLoading && preview && !wouldLock && (
                 <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <CheckCircle2 size={14} color="#86efac" /> Dentro dos limites do plano.
+                  <CheckCircle2 size={14} color="#8fc9a3" /> Dentro dos limites do plano.
                 </p>
               )}
 
-              {grantError && <p style={{ fontSize: '0.8rem', color: '#fca5a5' }}>{grantError}</p>}
-              {grantSuccess && <p style={{ fontSize: '0.8rem', color: '#86efac' }}>{grantSuccess}</p>}
+              {grantError && <p style={{ fontSize: '0.8rem', color: '#d99a9a' }}>{grantError}</p>}
+              {grantSuccess && <p style={{ fontSize: '0.8rem', color: '#8fc9a3' }}>{grantSuccess}</p>}
 
               <button className="primary-btn" onClick={handleGrant} disabled={granting || previewLoading}>
                 {granting ? 'A conceder…' : 'Conceder plano'}
@@ -454,7 +454,7 @@ export function AdminPlans() {
                     imediatamente — se ficar acima dos limites, fica "bloqueada" até o admin da organização ajustar.
                   </p>
 
-                  {revokeError && <p style={{ fontSize: '0.8rem', color: '#fca5a5', marginBottom: '0.75rem' }}>{revokeError}</p>}
+                  {revokeError && <p style={{ fontSize: '0.8rem', color: '#d99a9a', marginBottom: '0.75rem' }}>{revokeError}</p>}
 
                   {!confirmingRevoke ? (
                     <button className="danger-btn" onClick={() => setConfirmingRevoke(true)}>

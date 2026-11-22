@@ -212,7 +212,7 @@ export function CatalogPage() {
   if (loadError) {
     return (
       <div className="page-content">
-        <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
+        <div className="glass-card" style={{ padding: '1.25rem', color: '#d99a9a', fontSize: '0.85rem' }}>
           {loadError}
         </div>
       </div>
@@ -368,8 +368,8 @@ export function CatalogPage() {
                   <textarea className="field-textarea" rows={6} value={form.lyrics} onChange={(e) => updateField('lyrics', e.target.value)} />
                 </div>
 
-                {saveError && <p style={{ fontSize: '0.8rem', color: '#fca5a5' }}>{saveError}</p>}
-                {saveSuccess && <p style={{ fontSize: '0.8rem', color: '#86efac' }}>{saveSuccess}</p>}
+                {saveError && <p style={{ fontSize: '0.8rem', color: '#d99a9a' }}>{saveError}</p>}
+                {saveSuccess && <p style={{ fontSize: '0.8rem', color: '#8fc9a3' }}>{saveSuccess}</p>}
 
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
                   <button className="primary-btn" onClick={handleSave} disabled={saving}>
