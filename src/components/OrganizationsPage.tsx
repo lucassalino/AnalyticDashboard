@@ -86,7 +86,7 @@ export function OrganizationsPage({ orgs, onSelectOrg }: { orgs: OrgSummary[]; o
                         {!h ? (
                           <span className="table-muted">—</span>
                         ) : inactive ? (
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#fca5a5', fontSize: '0.78rem' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#d99a9a', fontSize: '0.78rem' }}>
                             <AlertTriangle size={12} />
                             {h.last_event_date ? `há ${h.days_since_last_event} dias` : 'sem eventos'}
                           </span>

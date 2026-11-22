@@ -57,7 +57,7 @@ export function TopSongs({ songs }: { songs: TopSong[] }) {
                     style={{
                       height: '100%',
                       width: `${Math.max(6, (song.times_used / max) * 100)}%`,
-                      background: '#3987e5',
+                      background: '#5b7fa6',
                       borderRadius: 9999,
                     }}
                   />

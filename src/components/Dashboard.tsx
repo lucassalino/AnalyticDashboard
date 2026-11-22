@@ -79,7 +79,7 @@ export function Dashboard({ userEmail }: { userEmail: string }) {
 
         {error && (
           <div className="page-content">
-            <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', color: '#d99a9a', fontSize: '0.85rem' }}>
               {error}
             </div>
           </div>

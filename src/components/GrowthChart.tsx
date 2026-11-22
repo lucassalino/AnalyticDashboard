@@ -9,11 +9,11 @@ import {
 } from 'recharts'
 import type { GrowthPoint } from '../lib/types'
 
-const COLOR_PROFILES = '#3987e5'
-const COLOR_ORGS = '#008300'
-const GRID = '#2c2c2a'
-const AXIS = '#383835'
-const MUTED = '#898781'
+const COLOR_PROFILES = '#5b7fa6'
+const COLOR_ORGS = '#5a9e6f'
+const GRID = '#262a30'
+const AXIS = '#363a42'
+const MUTED = '#8b93a0'
 
 function formatMonth(value: string | number | Date) {
   const d = new Date(value)
@@ -68,8 +68,8 @@ export function GrowthChart({ data }: { data: GrowthPoint[] }) {
           <Tooltip
             cursor={{ stroke: 'rgba(255,255,255,0.15)' }}
             contentStyle={{
-              background: 'rgba(18,18,22,0.95)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: '#15171c',
+              border: '1px solid rgba(148,163,184,0.18)',
               borderRadius: '0.5rem',
               fontSize: '0.75rem',
               color: '#fff',

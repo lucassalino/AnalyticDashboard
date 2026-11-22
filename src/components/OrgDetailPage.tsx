@@ -111,7 +111,7 @@ export function OrgDetailPage({ orgId, onBack }: { orgId: string; onBack: () => 
         <button className="ghost-btn" onClick={onBack} style={{ marginBottom: '1rem' }}>
           <ArrowLeft size={13} /> Voltar
         </button>
-        <div className="glass-card" style={{ padding: '1.25rem', color: '#fca5a5', fontSize: '0.85rem' }}>
+        <div className="glass-card" style={{ padding: '1.25rem', color: '#d99a9a', fontSize: '0.85rem' }}>
           {error ?? 'Organização não encontrada.'}
         </div>
       </div>
@@ -204,7 +204,7 @@ export function OrgDetailPage({ orgId, onBack }: { orgId: string; onBack: () => 
               <div key={l.resource_type}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.3rem' }}>
                   <span style={{ color: 'rgba(255,255,255,0.7)' }}>{RESOURCE_LABELS[l.resource_type]}</span>
-                  <span style={{ color: l.allowed ? 'rgba(255,255,255,0.5)' : '#fca5a5', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <span style={{ color: l.allowed ? 'rgba(255,255,255,0.5)' : '#d99a9a', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                     {!l.allowed && <AlertTriangle size={12} />}
                     {l.used} / {l.limit ?? '∞'}
                   </span>
@@ -214,7 +214,7 @@ export function OrgDetailPage({ orgId, onBack }: { orgId: string; onBack: () => 
                     style={{
                       height: '100%',
                       width: l.limit ? `${Math.max(4, pct)}%` : '100%',
-                      background: l.allowed ? '#3987e5' : '#f87171',
+                      background: l.allowed ? '#5b7fa6' : '#c65f5f',
                       borderRadius: 9999,
                     }}
                   />
@@ -224,7 +224,7 @@ export function OrgDetailPage({ orgId, onBack }: { orgId: string; onBack: () => 
           })}
           {limits.every((l) => l.allowed) && (
             <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-              <CheckCircle2 size={14} color="#86efac" /> Dentro dos limites do plano.
+              <CheckCircle2 size={14} color="#8fc9a3" /> Dentro dos limites do plano.
             </p>
           )}
         </div>
@@ -238,16 +238,16 @@ export function OrgDetailPage({ orgId, onBack }: { orgId: string; onBack: () => 
 
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={growth} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-            <CartesianGrid stroke="#2c2c2a" vertical={false} />
-            <XAxis dataKey="month" tickFormatter={formatMonth} stroke="#383835" tick={{ fill: '#898781', fontSize: 11 }} tickLine={false} axisLine={{ stroke: '#383835' }} />
-            <YAxis allowDecimals={false} stroke="#383835" tick={{ fill: '#898781', fontSize: 11 }} tickLine={false} axisLine={false} width={32} />
+            <CartesianGrid stroke="#262a30" vertical={false} />
+            <XAxis dataKey="month" tickFormatter={formatMonth} stroke="#363a42" tick={{ fill: '#8b93a0', fontSize: 11 }} tickLine={false} axisLine={{ stroke: '#363a42' }} />
+            <YAxis allowDecimals={false} stroke="#363a42" tick={{ fill: '#8b93a0', fontSize: 11 }} tickLine={false} axisLine={false} width={32} />
             <Tooltip
               cursor={{ stroke: 'rgba(255,255,255,0.15)' }}
-              contentStyle={{ background: 'rgba(18,18,22,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.5rem', fontSize: '0.75rem', color: '#fff' }}
+              contentStyle={{ background: '#15171c', border: '1px solid rgba(148,163,184,0.18)', borderRadius: '0.5rem', fontSize: '0.75rem', color: '#fff' }}
               labelFormatter={(v) => formatMonth(v as string)}
             />
-            <Line type="monotone" dataKey="new_members" name="Novos membros" stroke="#3987e5" strokeWidth={2} dot={{ r: 2.5, fill: '#3987e5', strokeWidth: 0 }} activeDot={{ r: 4 }} />
-            <Line type="monotone" dataKey="new_events" name="Novos eventos" stroke="#008300" strokeWidth={2} dot={{ r: 2.5, fill: '#008300', strokeWidth: 0 }} activeDot={{ r: 4 }} />
+            <Line type="monotone" dataKey="new_members" name="Novos membros" stroke="#5b7fa6" strokeWidth={2} dot={{ r: 2.5, fill: '#5b7fa6', strokeWidth: 0 }} activeDot={{ r: 4 }} />
+            <Line type="monotone" dataKey="new_events" name="Novos eventos" stroke="#5a9e6f" strokeWidth={2} dot={{ r: 2.5, fill: '#5a9e6f', strokeWidth: 0 }} activeDot={{ r: 4 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
